@@ -85,12 +85,12 @@ public:
     *this = *this + a;
     return *this;
   }
-  BigInt operator -= (BigInt a) {}
+  BigInt operator -= (BigInt a);
   BigInt operator *= (BigInt a) {
     *this = *this * a;
     return *this;
   }
-  BigInt operator /= (BigInt a) {}
+  BigInt operator /= (BigInt a);
 };
 
 int main() {
