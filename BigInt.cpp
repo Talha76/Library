@@ -36,7 +36,7 @@ public:
 
   // IO Operator
   friend istream& operator >> (istream &i, BigInt &a)
-  { i >> a; reverse(all(a.s)); a.normalize(); return i;}
+  { i >> a.s; reverse(all(a.s)); a.normalize(); return i;}
   friend ostream& operator << (ostream &o, BigInt a)
   { reverse(all(a.s)); o << a.s; return o; }
 
