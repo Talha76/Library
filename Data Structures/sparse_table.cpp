@@ -7,7 +7,7 @@ template<typename T> struct sparse_table {
   vector<T> a;
   vector<vector<T>> table;
 
-  sparse_table(int n, vector<int> &a) : n(n), table(n, vector<T>(__lg(n) + 1)) { this->a=a; build(); }
+  sparse_table(int n, vector<T> &a) : n(n), table(n, vector<T>(__lg(n) + 1)) { this->a=a; build(); }
   T query(int l, int r) {
     int d = r - l;
     T ret = INT_MAX;
