@@ -1,6 +1,7 @@
 #include "bits/stdc++.h"
 using namespace std;
 
+#define __lg(x) (31 - __builtin_clz(x))
 // 0-based indexing, query finds in range [first, last)
 template<typename T> struct sparse_table {
   int n;
