@@ -30,6 +30,9 @@ template<typename T> struct BIT {
       ret += Tree[i];
     return ret;
   }
+
+  // [l, r]
+  T query(int l, int r) { return query(r) - query(l - 1); }
 };
 
 void magic() {
@@ -45,17 +48,19 @@ void magic() {
     int c;
     cin >> c;
     int i, v, j;
+    cin >> i;
+    i++;
     switch(c) {
-      case 1: {cin >> i;
-              int ans = bit.query(i + 1) - bit.query(i);
+      case 1: {
+              int ans = bit.query(i, i);
               cout << ans << "\n";
-              bit.update(i + 1, -ans);}
+              bit.update(i, -ans);}
       break;
-      case 2: {cin >> i >> v;
-              bit.update(i + 1, v);}
+      case 2: {cin >> v;
+              bit.update(i, v);}
       break;
-      default: {cin >> i >> j;
-               cout << bit.query(j + 1) - bit.query(i) << "\n";}
+      default: {cin >> j;
+               cout << bit.query(j + 1, i) << "\n";}
     }
   }
 }
