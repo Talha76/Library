@@ -14,10 +14,10 @@ LL MST(int n, vector<array<int, 3>> &edges) {
 
     DSU(int n):parent(vector<int>(n)), Size(vector<int>(n, 1)) { iota(all(parent), 0); }
 
-    int find(int i) { return parent[i] == i ? i : parent[i] = find(parent[i]); }
+    int root(int i) { return parent[i] == i ? i : parent[i] = root(parent[i]); }
 
     void merge(int u, int v) {
-      u = find(u); v = find(v);
+      u = root(u); v = root(v);
       if(u == v) return;
       if(Size[u] < Size[v]) swap(u, v);
       parent[v] = u;
@@ -32,7 +32,7 @@ LL MST(int n, vector<array<int, 3>> &edges) {
   for(array<int, 3> a; --n and pq.size(); ) {
     a = pq.top();
     pq.pop();
-    if(dsu.find(a[1]) == dsu.find(a[2])) {
+    if(dsu.root(a[1]) == dsu.root(a[2])) {
       n++;
       continue;
     }
