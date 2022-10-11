@@ -16,17 +16,19 @@ typedef pair<int, int> PII;
 template<typename T> struct seg_tree {
   vector<T> tre;
   seg_tree() {}
-  seg_tree(vector<T> &a) : tre(vector<T>(4*a.size() + 4)) {}
-  T build(int l, int r, int n = 1) {
+  seg_tree(vector<T> &a) : tre(vector<T>(4*a.size() + 4)) { build(1, a.size(), a); }
+
+  T build(int l, int r, vector<T> &a, int n = 1) {
+    if(r - l == 1) return tre[n] = a[l];
     int m = (l + r) >> 1;
-    return tre[n] = f(build(l, m, 2*n), build(m, r, 2*n + 1));
+    return tre[n] = f(build(l, m, a, 2*n), build(m, r, a, 2*n + 1));
   }
 
   T query(int l, int r, const int i, const int j, int n = 1) {
     if(l >= i and r <= j)
       return tre[n];
     if(i >= r or j <= l)
-      return INT_MAX;
+      return 1e18;
 
     int m = (l + r) >> 1;
     return f(query(l, m, i, j, 2*n), query(m, r, i, j, 2*n + 1));
@@ -36,7 +38,7 @@ template<typename T> struct seg_tree {
     if(r - l == 1 and l == i)
       return tre[n] = v;
     if(i >= r or i < l)
-      return INT_MAX;
+      return 1e18;
 
     int m = (l + r) >> 1;
     return tre[n] = f(update(l, m, i, v, 2*n), update(m, r, i, v, 2*n + 1));
@@ -51,13 +53,10 @@ signed main() {
 
   int n;
   cin >> n;
-  int x;
-  seg_tree<int> s;
-  s.tre.assign(4*n + 4, INT_MAX);
-  for(int i = 0; i < n; i++) {
-    cin >> x;
-    s.update(1, n + 1, i + 1, x);
-  }
+  vector<LL> a(n + 1);
+  for(int i = 1; i <= n; i++) cin >> a[i];
+
+  seg_tree<LL> s(a);
 
   int q;
   cin >> q;
