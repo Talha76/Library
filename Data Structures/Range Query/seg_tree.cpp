@@ -53,10 +53,13 @@ signed main() {
 
   int n;
   cin >> n;
-  vector<LL> a(n + 1);
-  for(int i = 1; i <= n; i++) cin >> a[i];
-
-  seg_tree<LL> s(a);
+  seg_tree<LL> s;
+  s.tre.assign(4*n + 4, 1e18);
+  for(int i = 1; i <= n; i++) {
+    LL x;
+    cin >> x;
+    s.update(1, n + 1, i, x);
+  }
 
   int q;
   cin >> q;
