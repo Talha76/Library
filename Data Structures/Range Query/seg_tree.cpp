@@ -12,34 +12,28 @@ using namespace std;
 typedef long long LL;
 typedef pair<int, int> PII;
 
-// Finds in range [first, last)
+// Finds in range [first, last]
 template<typename T> struct seg_tree {
   vector<T> tre;
   seg_tree() {}
   seg_tree(vector<T> &a) : tre(vector<T>(4*a.size() + 4)) { build(1, a.size(), a); }
 
   T build(int l, int r, vector<T> &a, int n = 1) {
-    if(r - l == 1) return tre[n] = a[l];
+    if(l == r) return tre[n] = a[l];
     int m = (l + r) >> 1;
-    return tre[n] = f(build(l, m, a, 2*n), build(m, r, a, 2*n + 1));
+    return tre[n] = f(build(l, m, a, 2*n), build(m + 1, r, a, 2*n + 1));
   }
 
   T query(int l, int r, const int i, const int j, int n = 1) {
-    if(l >= i and r <= j)
-      return tre[n];
-    if(i >= r or j <= l)
-      return 1e18;
-
+    if(l >= i and r <= j) return tre[n];
+    if(i > r or j < l) return 1e18;
     int m = (l + r) >> 1;
-    return f(query(l, m, i, j, 2*n), query(m, r, i, j, 2*n + 1));
+    return f(query(l, m, i, j, 2*n), query(m + 1, r, i, j, 2*n + 1));
   }
 
   T update(int l, int r, const int i, const T v, int n = 1) {
-    if(r - l == 1 and l == i)
-      return tre[n] = v;
-    if(i >= r or i < l)
-      return 1e18;
-
+    if(i > r or i < l) return 1e18;
+    if(l == r) return tre[n] = v;
     int m = (l + r) >> 1;
     return tre[n] = f(update(l, m, i, v, 2*n), update(m, r, i, v, 2*n + 1));
   }
