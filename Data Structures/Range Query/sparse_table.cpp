@@ -2,7 +2,7 @@
 using namespace std;
 
 #define __lg(x) (31 - __builtin_clz(x))
-// 0-based indexing, query finds in range [first, last)
+// 0-based indexing, query finds in range [first, last]
 template<typename T> struct sparse_table {
   int n;
   vector<T> a;
@@ -10,12 +10,12 @@ template<typename T> struct sparse_table {
 
   sparse_table(vector<T> &a) : n(a.size()), table(n, vector<T>(__lg(n) + 1)) { this->a=a; build(); }
   T query(int l, int r) {
-    int d = r - l;
+    int d = r - l + 1;
     T ret = INT_MAX;
     int lg = __lg(d);
 
     // overlapping queries
-    ret = f(table[l][lg], table[r - (1<<lg)][lg]);
+    ret = f(table[l][lg], table[r - (1<<lg) + 1][lg]);
 
     // Non-overlapping queries
     for(int i = 0; i <= lg; l += ((d>>i)&1)*(1<<i), i++)
@@ -51,6 +51,6 @@ int main() {
   while(q--) {
     int l, r;
     cin >> l >> r;
-    cout << st.query(l, ++r) << "\n";
+    cout << st.query(l, r) << "\n";
   }
 }
