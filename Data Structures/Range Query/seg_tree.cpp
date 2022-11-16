@@ -16,7 +16,7 @@ typedef pair<int, int> PII;
 template<typename T> struct seg_tree {
   vector<T> Tree;
   seg_tree() {}
-  seg_tree(vector<T> &a) : Tree(vector<T>(4*a.size() + 4)) { build(1, a.size(), a); }
+  seg_tree(vector<T> &a) : Tree(vector<T>(4*a.size() + 4)) { build(1, a.size() - 1, a); }
 
   T build(int l, int r, vector<T> &a, int n = 1) {
     if(l == r) return Tree[n] = a[l];
