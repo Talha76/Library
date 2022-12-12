@@ -14,32 +14,38 @@ typedef pair<int, int> PII;
 
 // Finds in range [first, last]
 template<typename T> struct seg_tree {
-  vector<T> Tree;
-  seg_tree() {}
-  seg_tree(vector<T> &a) : Tree(vector<T>(4*a.size() + 4)) { build(1, a.size() - 1, a); }
+private:
+  int n;
+  vector<T> a, Tree;
 
-  T build(int l, int r, vector<T> &a, int n = 1) {
-    if(l == r) return Tree[n] = a[l];
-    int m = (l + r) >> 1;
-    return Tree[n] = f(build(l, m, a, 2*n), build(m + 1, r, a, 2*n + 1));
-  }
+  T f(T a, T b) { return min(a, b); }
 
-  T query(int l, int r, const int i, const int j, int n = 1) {
-    if(l >= i and r <= j) return Tree[n];
+  T seg_query(const int i, const int j, int l, int r, int node = 1) {
+    if(l >= i and r <= j) return Tree[node];
     if(i > r or j < l) return 1e18;
     int m = (l + r) >> 1;
-    return f(query(l, m, i, j, 2*n), query(m + 1, r, i, j, 2*n + 1));
+    return f(seg_query(l, m, i, j, 2*node), seg_query(m + 1, r, i, j, 2*node + 1));
   }
 
-  T update(int l, int r, const int i, const T v, int n = 1) {
-    if(i > r or i < l) return 1e18;
-    if(l == r) return Tree[n] = v;
+  T seg_update(const int i, const T v, int l, int r, int node = 1) {
+    if(i > r or i < l) return Tree[node];
+    if(l == r) return Tree[node] = v;
     int m = (l + r) >> 1;
-    return Tree[n] = f(update(l, m, i, v, 2*n), update(m, r, i, v, 2*n + 1));
+    return Tree[node] = f(seg_update(l, m, i, v, 2*node), seg_update(m + 1, r, i, v, 2*node + 1));
+  }
+public:
+  seg_tree() {}
+  seg_tree(vector<T> &a) : n(a.size()), a(a), Tree(vector<T>(4*a.size())) { a.insert(a.begin(), -1); build(1, n); }
+
+  T build(int l, int r, int node = 1) {
+    if(l == r) return Tree[node] = a[l];
+    int m = (l + r) >> 1;
+    return Tree[n] = f(build(l, m, 2*node), build(m + 1, r, 2*node + 1));
   }
 
-private:
-  T f(T a, T b) { return min(a, b); }
+  T query(const int &i, const int &j) { return seg_query(i, j, 1, n); }
+
+  T update(const int &i, const int &v) { return seg_update(i, v, 1, n); }
 };
 
 signed main() {
@@ -47,21 +53,18 @@ signed main() {
 
   int n;
   cin >> n;
-  seg_tree<LL> s;
-  s.Tree.assign(4*n + 4, 1e18);
-  for(int i = 1; i <= n; i++) {
-    LL x;
-    cin >> x;
-    s.update(1, n + 1, i, x);
-  }
-
+  vector<LL> a(n);
+  for(auto &i : a)
+    cin >> i;
+  
+  seg_tree<LL> s(a);
   int q;
   cin >> q;
   while(q--) {
     int i, j;
     cin >> i >> j;
-    i++; j += 2;
-    cout << s.query(1, n + 1, i, j) << endl;
+    i++; j++;
+    cout << s.query(i, j) << endl;
   }
 
   return 0;
