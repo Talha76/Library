@@ -1,9 +1,4 @@
-// Then which of Allah's favor will you deny?
-#include "bits/stdc++.h"
-#define all(v) v.begin(), v.end()
-using namespace std;
-typedef long long LL;
-
+// tested by: https://judge.yosupo.jp/problem/unionfind
 struct DSU {
   vector<int> parent;
   vector<int> Size;
@@ -21,20 +16,23 @@ struct DSU {
   }
 };
 
-void magic() {
-  
-}
+namespace DSU {
+  vector<int> parent;
+  vector<int> Size;
 
-signed main() {
-  cin.tie(NULL)->sync_with_stdio(false);
-
-  int T = 1;
-  cin >> T;
-  while(T--) {
-    magic();
-    cout << "\n";
+  void init(int n) {
+    parent = Size = vector<int>(n, 1);
+    iota(all(parent), 0);
   }
 
-  return 0;
-}
+  int find(int i) { return parent[i] == i ? i : parent[i] = find(parent[i]); }
+
+  void merge(int u, int v) {
+    u = find(u); v = find(v);
+    if(u == v) return;
+    if(Size[u] < Size[v]) swap(u, v);
+    parent[v] = u;
+    Size[u] += Size[v];
+  }
+};
 
