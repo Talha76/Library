@@ -48,10 +48,20 @@ public:
   bool operator != (const big_int &a) { return a.s != s; }
 
   // Relational Operator
-  bool operator > (const big_int&);
-  bool operator >= (const big_int&);
-  bool operator < (const big_int&);
-  bool operator <= (const big_int&);
+  bool operator > (const big_int& a) {
+    if (this->s.size() != a.s.size()) return this->s.size() > a.s.size();
+    return this->s > a.s;
+  }
+  bool operator >= (const big_int& a) {
+    return *this > a or *this == a;
+  }
+  bool operator < (const big_int& a) {
+    if (this->s.size() != a.s.size()) return this->s.size() < a.s.size();
+    return this->s < a.s;
+  }
+  bool operator <= (const big_int& ) {
+    return *this < a or *this == a;
+  }
 
   // Unary Operator
   big_int operator - ();
