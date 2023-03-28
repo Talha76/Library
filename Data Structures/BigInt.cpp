@@ -43,7 +43,7 @@ public:
   }
   friend ostream& operator << (ostream &o, const big_int& a) {
     if (a.sign == -1) o << '-';
-    for (int i = (int)a.size(); ~i; i--) o << a[i];
+    for (int i = (int)a.size() - 1; ~i; i--) o << a[i];
     return o;
   }
 
