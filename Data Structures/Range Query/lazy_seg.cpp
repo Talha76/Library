@@ -1,71 +1,140 @@
-#include "bits/stdc++.h"
-using namespace std;
-// Solves: https://lightoj.com/problem/horrible-queries
-
-template <class T>
-struct lazy_seg {
-  vector<T> Tree, prop;
-  lazy_seg() {}
-  lazy_seg(vector<T> &a) : Tree(vector<T>(4*a.size())), prop(vector<T>(4*a.size())) { build(1, a.size() - 1, a); }
-
-  T build(int l, int r, vector<T> &a, int n = 1) {
-    if(l == r) return Tree[n] = a[l];
-    int m = (l + r) >> 1;
-    return Tree[n] = f(build(l, m, a, 2*n), build(m + 1, r, a, 2*n + 1));
+// Namespace
+namespace lazySeg {
+  const int N = 1000006;
+  
+  using DT = LL;
+  using LT = LL;
+  constexpr DT I = 0;
+  constexpr LT None = 0;
+  DT val[4 * N];
+  LT lazy[4 * N];
+  int L, R;
+  
+  void pull(int s, int e, int node) {
+    val[node] = val[node << 1] + val[node << 1 | 1];
   }
-
-  T update(int i, int j, T x, int l, int r, int node = 1) {
-    if(i > r or j < l) return Tree[node];
-    if(i <= l and r <= j) {
-      prop[node] += x;
-      return Tree[node] += (r - l + 1) * x;
+  
+  void apply(const LT &U, int s, int e, int node) {
+    val[node] += (e - s + 1) * U;
+    lazy[node] += U;
+  }
+  
+  void reset(int node) { lazy[node] = None; }
+  DT merge(const DT &a, const DT &b) { return a + b; }
+  DT get(int s, int e, int node) { return val[node]; }
+  
+  void push(int s, int e, int node) {
+    if (s == e) return;
+    apply(lazy[node], s, s + e >> 1, node << 1);
+    apply(lazy[node], s + e + 2 >> 1, e, node << 1 | 1);
+    reset(node);
+  }
+  
+  void build(int s, int e, vector<DT> &v, int node = 1) {
+    int m = s + e >> 1;
+    if (s == e) {
+      val[node] = v[s];
+      return;
     }
-    int m = (r + l)/2;
-    return Tree[node] = f(update(i, j, x, l, m, node*2), update(i, j, x, m + 1, r, node*2 + 1)) + (r - l + 1) * prop[node];
+    build(s, m, v, node * 2);
+    build(m + 1, e, v, node * 2 + 1);
+    pull(s, e, node);
   }
-
-  T query(int i, int j, int l, int r, T carry = 0, int node = 1) {
-    if(i > r or j < l) return 0;
-    if(i <= l and r <= j) {
-      return carry * (r - l + 1) + Tree[node];
+  
+  void update(int S, int E, LT uval, int s = L, int e = R, int node = 1) {
+    if (S > E) return;
+    if (S == s and E == e) {
+      apply(uval, s, e, node);
+      return;
     }
-    int m = (l + r)/2;
-    return f(query(i, j, l, m, carry + prop[node], node*2), query(i, j, m + 1, r, carry + prop[node], node*2 + 1));
+    push(s, e, node);
+    int m = s + e >> 1;
+    update(S, min(m, E), uval, s, m, node * 2);
+    update(max(S, m + 1), E, uval, m + 1, e, node * 2 + 1);
+    pull(s, e, node);
+  }
+  
+  DT query(int S, int E, int s = L, int e = R, int node = 1) {
+    if (S > E) return I;
+    if (s == S and e == E) return get(s, e, node);
+    push(s, e, node);
+    int m = s + e >> 1;
+    DT L = query(S, min(m, E), s, m, node * 2);
+    DT R = query(max(S, m + 1), E, m + 1, e, node * 2 + 1);
+    return merge(L, R);
+  }
+  
+  void init(int _L, int _R, vector<DT> &v) {
+    L = _L, R = _R;
+    build(L, R, v);
+  }
+}
+
+// Structure
+template<typename DT, typename LT = DT>
+struct lazySeg {
+  int N;
+  DT I = 0;
+  LT None = 0;
+  int L, R;
+  vector<DT> val;
+  vector<LT> lazy;
+
+  lazySeg(vector<DT> const &_a, DT _I = 0, LT _None = 0) : N(a.size()), I(_I), None(_None), L(0), R(a.size()-1) {
+    val.resize(N << 2), lazy.resize(N << 2);
+  }
+  
+  void pull(int s, int e, int node) {
+    val[node] = val[node << 1] + val[node << 1 | 1];
   }
 
-private:
-  T f(T x, T y) { return x + y; }
+  void apply(const LT &U, int s, int e, int node) {
+    val[node] += (e - s + 1) * U;
+    lazy[node] += U;
+  }
+
+  void reset(int node) { lazy[node] = None; }
+  DT merge(const DT &a, const DT &b) { return a + b; }
+  DT get(int s, int e, int node) { return val[node]; }
+  
+  void push(int s, int e, int node) {
+    if (s == e) return;
+    apply(lazy[node], s, s + e >> 1, node << 1);
+    apply(lazy[node], s + e + 2 >> 1, e, node << 1 | 1);
+    reset(node);
+  }
+
+  void build(int s = L, int e = R, int node = 1) {
+    int m = s + e >> 1;
+    if (s == e) {
+      val[node] = v[s];
+      return;
+    }
+    build(s, m, v, node << 1);
+    build(m + 1, e, v, node << 1 | 1);
+    pull(s, e, node);
+  }
+
+  void update(int S, int E, const LT &uval, int s = L, int e = R, int node = 1) {
+    if (S > E) return;
+    if (S == s and E == e) {
+      apply(uval, s, e, node);
+      return;
+    }
+    push(s, e, node);
+    int m = s + e >> 1;
+    update(S, min(m, E), uval, s, m, node << 1);
+    update(max(S, m + 1), E, uval, m + 1, e, node << 1 | 1);
+    pull(s, e, node);
+  }
+
+  DT query(int S, int E, int s = L, int e = R, int node = 1) {
+    if (S > E) return I;
+    if (s == S and e == E) return get(s, e, node);
+    push(s, e, node);
+    int m = s + e >> 1;
+    DT ql = query(S, min(m, E), s, m, node * 2);
+    DT qr = query(max(S, m + 1), E, m + 1, e, node * 2 + 1);
+    return merge(ql, qr);
+  }
 };
-
-void magic() {
-  int n, q;
-  cin >> n >> q;
-  lazy_seg<long long> seg;
-  seg.Tree.assign(4*n, 0);
-  seg.prop.assign(4*n, 0);
-
-  int c, l, r, v;
-  while(q--) {
-    cin >> c >> l >> r;
-    l++; r++;
-    if(c) {
-      cout << seg.query(l, r, 1, n) << "\n";
-    } else {
-      cin >> v;
-      seg.update(l, r, v, 1, n);
-    }
-  }
-}
-
-int32_t main() {
-  cin.tie(NULL)->sync_with_stdio(false);
-
-  int T, kase = 0;
-  cin >> T;
-  while(T--) {
-    cout << "Case " << ++kase << ":\n";
-    magic();
-  }
-
-  return 0;
-}
