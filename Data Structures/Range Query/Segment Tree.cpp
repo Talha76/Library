@@ -10,11 +10,6 @@ namespace lazySeg {
   LT lazy[4 * N];
   int L, R;
 
-  void init(int _L, int _R, vector<DT> &v) {
-    L = _L, R = _R;
-    build(L, R, v);
-  }
-
   void pull(int s, int e, int node) {
     val[node] = val[node << 1] + val[node << 1 | 1];
   }
@@ -67,6 +62,11 @@ namespace lazySeg {
     DT L = query(S, min(m, E), s, m, node * 2);
     DT R = query(max(S, m + 1), E, m + 1, e, node * 2 + 1);
     return merge(L, R);
+  }
+
+  void init(int _L, int _R, vector<DT> &v) {
+    L = _L, R = _R;
+    build(L, R, v);
   }
 }
 
