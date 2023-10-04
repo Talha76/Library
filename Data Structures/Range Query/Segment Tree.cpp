@@ -34,6 +34,7 @@ namespace lazySeg {
     int m = s + e >> 1;
     if (s == e) {
       val[node] = v[s];
+      reset(node);
       return;
     }
     build(s, m, v, node * 2);
