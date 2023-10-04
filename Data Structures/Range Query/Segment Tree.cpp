@@ -10,7 +10,7 @@ namespace lazySeg {
   LT lazy[N << 2];
   int L, R;
 
-  void pull(int s, int e, int node) {
+  void pull(int s, int m, int e, int node) {
     val[node] = val[node << 1] + val[node << 1 | 1];
   }
   
@@ -20,7 +20,7 @@ namespace lazySeg {
   }
   
   void reset(int node) { lazy[node] = None; }
-  DT merge(const DT &a, const DT &b) { return a + b; }
+  DT merge(int s, int m, int e, const DT &a, const DT &b) { return a + b; }
   DT get(int s, int e, int node) { return val[node]; }
   
   void push(int s, int e, int node) {
@@ -39,7 +39,7 @@ namespace lazySeg {
     }
     build(s, m, v, node * 2);
     build(m + 1, e, v, node * 2 + 1);
-    pull(s, e, node);
+    pull(s, m, e, node);
   }
 
   void update(int S, int E, LT uval, int s = L, int e = R, int node = 1) {
@@ -52,7 +52,7 @@ namespace lazySeg {
     int m = s + e >> 1;
     update(S, min(m, E), uval, s, m, node << 1);
     update(max(S, m + 1), E, uval, m + 1, e, node << 1 | 1);
-    pull(s, e, node);
+    pull(s, m, e, node);
   }
 
   DT query(int S, int E, int s = L, int e = R, int node = 1) {
@@ -60,9 +60,9 @@ namespace lazySeg {
     if (s == S and e == E) return get(s, e, node);
     push(s, e, node);
     int m = s + e >> 1;
-    DT L = query(S, min(m, E), s, m, node << 1);
-    DT R = query(max(S, m + 1), E, m + 1, e, node << 1 | 1);
-    return merge(L, R);
+    DT ql = query(S, min(m, E), s, m, node << 1);
+    DT qr = query(max(S, m + 1), E, m + 1, e, node << 1 | 1);
+    return merge(s, m, e, ql, qr);
   }
 
   void init(int _L, int _R, vector<DT> &v) {
