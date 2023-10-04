@@ -9,7 +9,12 @@ namespace lazySeg {
   DT val[4 * N];
   LT lazy[4 * N];
   int L, R;
-  
+
+  void init(int _L, int _R, vector<DT> &v) {
+    L = _L, R = _R;
+    build(L, R, v);
+  }
+
   void pull(int s, int e, int node) {
     val[node] = val[node << 1] + val[node << 1 | 1];
   }
@@ -40,7 +45,7 @@ namespace lazySeg {
     build(m + 1, e, v, node * 2 + 1);
     pull(s, e, node);
   }
-  
+
   void update(int S, int E, LT uval, int s = L, int e = R, int node = 1) {
     if (S > E) return;
     if (S == s and E == e) {
@@ -53,7 +58,7 @@ namespace lazySeg {
     update(max(S, m + 1), E, uval, m + 1, e, node * 2 + 1);
     pull(s, e, node);
   }
-  
+
   DT query(int S, int E, int s = L, int e = R, int node = 1) {
     if (S > E) return I;
     if (s == S and e == E) return get(s, e, node);
@@ -63,25 +68,20 @@ namespace lazySeg {
     DT R = query(max(S, m + 1), E, m + 1, e, node * 2 + 1);
     return merge(L, R);
   }
-  
-  void init(int _L, int _R, vector<DT> &v) {
-    L = _L, R = _R;
-    build(L, R, v);
-  }
 }
 
 // Structure
 template<typename DT, typename LT = DT>
 struct lazySeg {
-  int N;
   DT I = 0;
   LT None = 0;
-  int L, R;
   vector<DT> val;
   vector<LT> lazy;
 
-  lazySeg(vector<DT> const &_a, DT _I = 0, LT _None = 0) : N(a.size()), I(_I), None(_None), L(0), R(a.size()-1) {
+  lazySeg(vector<DT> const &_a, DT _I = 0, LT _None = 0) : I(_I), None(_None) {
+    const int N = _a.size();
     val.resize(N << 2), lazy.resize(N << 2);
+    build(_a, 0, N-1);
   }
   
   void pull(int s, int e, int node) {
@@ -104,18 +104,19 @@ struct lazySeg {
     reset(node);
   }
 
-  void build(int s = L, int e = R, int node = 1) {
+  void build(vector<DT> const &v, int s, int e, int node = 1) {
     int m = s + e >> 1;
     if (s == e) {
       val[node] = v[s];
+      reset(node);
       return;
     }
-    build(s, m, v, node << 1);
-    build(m + 1, e, v, node << 1 | 1);
+    build(v, s, m, node << 1);
+    build(v, m + 1, e, node << 1 | 1);
     pull(s, e, node);
   }
 
-  void update(int S, int E, const LT &uval, int s = L, int e = R, int node = 1) {
+  void update(int S, int E, const LT &uval, int s, int e, int node = 1) {
     if (S > E) return;
     if (S == s and E == e) {
       apply(uval, s, e, node);
@@ -128,13 +129,13 @@ struct lazySeg {
     pull(s, e, node);
   }
 
-  DT query(int S, int E, int s = L, int e = R, int node = 1) {
+  DT query(int S, int E, int s, int e, int node = 1) {
     if (S > E) return I;
     if (s == S and e == E) return get(s, e, node);
     push(s, e, node);
     int m = s + e >> 1;
-    DT ql = query(S, min(m, E), s, m, node * 2);
-    DT qr = query(max(S, m + 1), E, m + 1, e, node * 2 + 1);
+    DT ql = query(S, min(m, E), s, m, node << 1);
+    DT qr = query(max(S, m + 1), E, m + 1, e, node << 1 | 1);
     return merge(ql, qr);
   }
 };
