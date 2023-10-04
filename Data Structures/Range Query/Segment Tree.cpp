@@ -6,8 +6,8 @@ namespace lazySeg {
   using LT = LL;
   constexpr DT I = 0;
   constexpr LT None = 0;
-  DT val[4 * N];
-  LT lazy[4 * N];
+  DT val[N << 2];
+  LT lazy[N << 2];
   int L, R;
 
   void pull(int s, int e, int node) {
@@ -49,8 +49,8 @@ namespace lazySeg {
     }
     push(s, e, node);
     int m = s + e >> 1;
-    update(S, min(m, E), uval, s, m, node * 2);
-    update(max(S, m + 1), E, uval, m + 1, e, node * 2 + 1);
+    update(S, min(m, E), uval, s, m, node << 1);
+    update(max(S, m + 1), E, uval, m + 1, e, node << 1 | 1);
     pull(s, e, node);
   }
 
@@ -59,8 +59,8 @@ namespace lazySeg {
     if (s == S and e == E) return get(s, e, node);
     push(s, e, node);
     int m = s + e >> 1;
-    DT L = query(S, min(m, E), s, m, node * 2);
-    DT R = query(max(S, m + 1), E, m + 1, e, node * 2 + 1);
+    DT L = query(S, min(m, E), s, m, node << 1);
+    DT R = query(max(S, m + 1), E, m + 1, e, node << 1 | 1);
     return merge(L, R);
   }
 
