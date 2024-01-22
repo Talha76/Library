@@ -10,9 +10,6 @@ than doing two ffts, but faster by about 30%.
 **/
 // Use anyMod for ans (mod M)
 
-#include<bits/stdc++.h>
-using namespace std;
-
 namespace FFT {
     // typedef complex<double> CD;
     struct CD {
