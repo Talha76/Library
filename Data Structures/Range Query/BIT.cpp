@@ -1,5 +1,4 @@
 // tested by: https://judge.yosupo.jp/problem/point_add_range_sum
-
 // 1-indexing
 namespace BIT {
   int n;

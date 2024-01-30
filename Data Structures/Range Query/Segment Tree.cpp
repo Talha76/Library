@@ -1,142 +1,86 @@
-// Namespace
-namespace lazySeg {
-  const int N = 1000006;
-  
-  using DT = LL;
-  using LT = LL;
-  constexpr DT I = 0;
-  constexpr LT None = 0;
-  DT val[N << 2];
-  LT lazy[N << 2];
-  int L, R;
+/*--------------------------------------------------
+ * There are six things you need to worry about
 
-  void pull(int s, int m, int e, int node) {
-    val[node] = val[node << 1] + val[node << 1 | 1];
-  }
-  
-  void apply(const LT &U, int s, int e, int node) {
-    val[node] += (e - s + 1) * U;
-    lazy[node] += U;
-  }
-  
-  void reset(int node) { lazy[node] = None; }
-  DT merge(int s, int m, int e, const DT &a, const DT &b) { return a + b; }
-  DT get(int s, int e, int node) { return val[node]; }
-  
-  void push(int s, int e, int node) {
-    if (s == e) return;
-    apply(lazy[node], s, s + e >> 1, node << 1);
-    apply(lazy[node], s + e + 2 >> 1, e, node << 1 | 1);
-    reset(node);
-  }
-  
-  void build(int s, int e, vector<DT> &v, int node = 1) {
-    int m = s + e >> 1;
-    if (s == e) {
-      val[node] = v[s];
-      reset(node);
-      return;
+    * The data type of the values on the nodes: DT
+    * The data type of the updates on the nodes: LT
+        Lazy data will be the same as an update
+        Lazy data is the update that has ALREADY BEEN 
+        PROCESSED on this node, and WILL BE PUSHED down
+        to the childred later, value is always updated.
+    * How does the value and lazy data of a node change
+        when a new update comes : apply()
+        Merging of updates take place here
+    * How to merge the results of two nodes while answering
+        queries : merge()
+    * What is the identity of apply() : None
+        This is equivalent to "No update", should represent an
+        update which changes nothing
+    * What is the identity of merge() : I
+        This is the equivalent to answering queries in an empty
+        range, a value that will never change the result of an
+        answer
+
+ *--------------------------------------------------*/
+namespace segtree {
+    const int N = 1000006;
+
+    using DT = LL;
+    using LT = LL;
+    constexpr DT I = 0; 
+    constexpr LT None = 0;
+
+    DT val[4 * N];
+    LT lz[4 * N];
+    int L, R;
+    void apply(int u, const LT &U, int l, int r) {
+        val[u] += (r - l + 1) * U;
+        lz[u] += U;
     }
-    build(s, m, v, node * 2);
-    build(m + 1, e, v, node * 2 + 1);
-    pull(s, m, e, node);
-  }
-
-  void update(int S, int E, LT uval, int s = L, int e = R, int node = 1) {
-    if (S > E) return;
-    if (S == s and E == e) {
-      apply(uval, s, e, node);
-      return;
+    DT merge(const DT &a, const DT &b, int l, int r) {
+        return a + b;
     }
-    push(s, e, node);
-    int m = s + e >> 1;
-    update(S, min(m, E), uval, s, m, node << 1);
-    update(max(S, m + 1), E, uval, m + 1, e, node << 1 | 1);
-    pull(s, m, e, node);
-  }
+    /* -- Do Not Touch Anything Below This -- */
 
-  DT query(int S, int E, int s = L, int e = R, int node = 1) {
-    if (S > E) return I;
-    if (s == S and e == E) return get(s, e, node);
-    push(s, e, node);
-    int m = s + e >> 1;
-    DT ql = query(S, min(m, E), s, m, node << 1);
-    DT qr = query(max(S, m + 1), E, m + 1, e, node << 1 | 1);
-    return merge(s, m, e, ql, qr);
-  }
-
-  void init(int _L, int _R, vector<DT> &v) {
-    L = _L, R = _R;
-    build(L, R, v);
-  }
-}
-
-// Structure
-template<typename DT, typename LT = DT>
-struct lazySeg {
-  DT I = 0;
-  LT None = 0;
-  vector<DT> val;
-  vector<LT> lazy;
-
-  lazySeg(vector<DT> const &_a, DT _I = 0, LT _None = 0) : I(_I), None(_None) {
-    const int N = _a.size();
-    val.resize(N << 2), lazy.resize(N << 2);
-    build(_a, 0, N-1);
-  }
-  
-  void pull(int s, int e, int node) {
-    val[node] = val[node << 1] + val[node << 1 | 1];
-  }
-
-  void apply(const LT &U, int s, int e, int node) {
-    val[node] += (e - s + 1) * U;
-    lazy[node] += U;
-  }
-
-  void reset(int node) { lazy[node] = None; }
-  DT merge(const DT &a, const DT &b) { return a + b; }
-  DT get(int s, int e, int node) { return val[node]; }
-  
-  void push(int s, int e, int node) {
-    if (s == e) return;
-    apply(lazy[node], s, s + e >> 1, node << 1);
-    apply(lazy[node], s + e + 2 >> 1, e, node << 1 | 1);
-    reset(node);
-  }
-
-  void build(vector<DT> const &v, int s, int e, int node = 1) {
-    int m = s + e >> 1;
-    if (s == e) {
-      val[node] = v[s];
-      reset(node);
-      return;
+    void push(int l, int r, int u) {
+        if(l == r) return;
+        apply(u << 1, lz[u], l, (l + r) >> 1);
+        apply(u << 1 | 1, lz[u], (l + r + 2) >> 1, r);
+        lz[u] = None;
     }
-    build(v, s, m, node << 1);
-    build(v, m + 1, e, node << 1 | 1);
-    pull(s, e, node);
-  }
-
-  void update(int S, int E, const LT &uval, int s, int e, int node = 1) {
-    if (S > E) return;
-    if (S == s and E == e) {
-      apply(uval, s, e, node);
-      return;
+    void build(int l, int r, vector <DT> &v, int u = 1 ) {
+        lz[u] = None;
+        if(l == r) {
+            val[u] = v[l];
+            return;
+        }
+        int m = (l + r) >> 1, lft = u << 1, ryt = lft | 1;
+        build(l, m, v, lft);
+        build(m + 1, r, v, ryt);
+        val[u] = merge(val[lft], val[ryt], l, r);
     }
-    push(s, e, node);
-    int m = s + e >> 1;
-    update(S, min(m, E), uval, s, m, node << 1);
-    update(max(S, m + 1), E, uval, m + 1, e, node << 1 | 1);
-    pull(s, e, node);
-  }
-
-  DT query(int S, int E, int s, int e, int node = 1) {
-    if (S > E) return I;
-    if (s == S and e == E) return get(s, e, node);
-    push(s, e, node);
-    int m = s + e >> 1;
-    DT ql = query(S, min(m, E), s, m, node << 1);
-    DT qr = query(max(S, m + 1), E, m + 1, e, node << 1 | 1);
-    return merge(ql, qr);
-  }
+    void update(int ql,int qr, LT uval, int l = L, int r = R, int u = 1) {
+        if(ql > qr) return;
+        if(ql == l and qr == r) {
+            apply(u, uval, l, r);
+            return;
+        }
+        push(l, r, u);
+        int m = (l + r) >> 1, lft = u << 1, ryt = lft | 1;
+        update(ql, min(m, qr), uval,  l,  m, lft);
+        update(max(ql, m + 1), qr, uval, m + 1, r, ryt);
+        val[u] = merge(val[lft], val[ryt], l, r);
+    }
+    DT query(int ql, int qr, int l = L, int r = R, int u = 1) {
+        if(ql > qr) return I;
+        if(l == ql and r == qr) return val[u];
+        push(l, r, u);
+        int m = (l + r) >> 1, lft = u << 1, ryt = lft | 1;
+        DT ansl = query(ql, min(m, qr), l, m, lft);
+        DT ansr = query(max(ql, m + 1), qr, m + 1, r, ryt);
+        return merge(ansl, ansr, l, r);
+    }
+    void init(int _L, int _R, vector <DT> &v) {
+        L = _L, R = _R;
+        build(L, R, v);
+    }
 };
