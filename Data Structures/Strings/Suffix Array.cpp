@@ -7,7 +7,7 @@ using namespace std;
 
   - Call getSuffixArray(s) to get the suffix array of string s
   - Call getLCParray(s, SA, rank) to get the LCP array of string s
-  - Don't use '$' as delimiter in the string
+  - Don't use '$' as delimiter. Use '%' instead
 */
 namespace SuffixArray {
   void inducedSort (const vector <int> &vec, int val_range, vector <int> &SA, const vector <int> &sl, const vector <int> &lms_idx) {
