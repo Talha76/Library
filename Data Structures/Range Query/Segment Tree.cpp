@@ -49,37 +49,37 @@ namespace segtree {
     apply(u << 1 | 1, lz[u], (l + r + 2) >> 1, r);
     lz[u] = None;
   }
-  void build(int l, int r, vector <DT> const &v, int u = 1 ) {
+  void build(int s, int e, vector <DT> const &v, int u = 1 ) {
     lz[u] = None;
-    if(l == r) {
-      val[u] = v[l];
+    if(s == e) {
+      val[u] = v[s];
       return;
     }
-    int m = (l + r) >> 1, lft = u << 1, ryt = lft | 1;
-    build(l, m, v, lft);
-    build(m + 1, r, v, ryt);
-    val[u] = merge(val[lft], val[ryt], l, r);
+    int m = s+e >> 1, lft = u << 1, ryt = lft | 1;
+    build(s, m, v, lft);
+    build(m+1, e, v, ryt);
+    val[u] = merge(val[lft], val[ryt], s, e);
   }
-  void update(int ql,int qr, LT uval, int l = L, int r = R, int u = 1) {
-    if (qr < l or ql > r) return;
-    if(ql <= l and r <= qr) {
-      apply(u, uval, l, r);
+  void update(int l,int r, LT uval, int s = L, int e = R, int u = 1) {
+    if (r < s or l > e) return;
+    if(l <= s and e <= r) {
+      apply(u, uval, s, e);
       return;
     }
-    push(l, r, u);
-    int m = (l + r) >> 1, lft = u << 1, ryt = lft | 1;
-    update(ql, qr, uval,  l,  m, lft);
-    update(ql, qr, uval, m + 1, r, ryt);
-    val[u] = merge(val[lft], val[ryt], l, r);
+    push(s, e, u);
+    int m = s+e >> 1, lft = u << 1, ryt = lft | 1;
+    update(l, r, uval,  s,  m, lft);
+    update(l, r, uval, m+1, e, ryt);
+    val[u] = merge(val[lft], val[ryt], s, e);
   }
-  DT query(int ql, int qr, int l = L, int r = R, int u = 1) {
-    if (qr < l or ql > r) return I;
-    if (ql <= l and r <= qr) return val[u];
-    push(l, r, u);
-    int m = (l + r) >> 1, lft = u << 1, ryt = lft | 1;
-    DT ansl = query(ql, qr, l, m, lft);
-    DT ansr = query(ql, qr, m + 1, r, ryt);
-    return merge(ansl, ansr, l, r);
+  DT query(int l, int r, int s = L, int e = R, int u = 1) {
+    if (r < s or l > e) return I;
+    if (l <= s and e <= r) return val[u];
+    push(s, e, u);
+    int m = s+e >> 1, lft = u << 1, ryt = lft | 1;
+    DT ansl = query(l, r, s, m, lft);
+    DT ansr = query(l, r, m+1, e, ryt);
+    return merge(ansl, ansr, s, e);
   }
   void init(int _L, int _R, vector <DT> v) {
     L = _L, R = _R;
