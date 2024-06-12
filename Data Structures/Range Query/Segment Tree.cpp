@@ -35,7 +35,8 @@ namespace segtree {
   LT lz[N<<2];
   int L, R;
   void apply(int u, const LT &U, int l, int r) {
-    if (U != None) val[u] += (r - l + 1) * U;
+    if (U == None) return;
+    val[u] += (r - l + 1) * U;
     lz[u] += U;
   }
   DT merge(const DT &a, const DT &b, int l, int r) {
