@@ -1,9 +1,7 @@
-#include "bits/stdc++.h"
-using namespace std;
 // tested by: https://judge.yosupo.jp/problem/staticrmq
 // 0-based indexing, query finds in range [first, last]
+inline int lg(int x) { return x ? 31 - __builtin_clz(x) : -1; }
 namespace sparse_table {
-  #define lg(x) (31 - __builtin_clz(x))
   using DT = int;
   vector<vector<DT>> table;
   DT f(DT p1, DT p2) { return min(p1, p2); }
@@ -24,4 +22,3 @@ namespace sparse_table {
     return f(table[l][d], table[r - (1<<d) + 1][d]);
   }
 }
-

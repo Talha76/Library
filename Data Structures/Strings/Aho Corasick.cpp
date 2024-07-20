@@ -1,8 +1,3 @@
-// Then which of Allah's favor will you deny?
-// author: MushfiqTalha
-#include "bits/stdc++.h"
-using namespace std;
-
 /*
  * Solves SPOJ-ahocur
  * source: AlphaQ

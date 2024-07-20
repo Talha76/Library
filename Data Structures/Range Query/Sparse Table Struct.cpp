@@ -1,13 +1,11 @@
-#include "bits/stdc++.h"
-using namespace std;
+inline int lg(int x) { return x ? 31 - __builtin_clz(x) : -1; } 
 // 0-based indexing, query finds in range [first, last]
 template<typename T> struct sparse_table {
-  #define lg(x) (31 - __builtin_clz(x))
   int n;
   vector<vector<T>> table;
+  function<T(T,T)> f;
 
-  T f(T p1, T p2) { return min(p1, p2); }
-  sparse_table(vector<T> &a) : n(a.size()), table(n, vector<T>(lg(n) + 1)) {
+  sparse_table(vector<T> &a, function<T(T,T)> _f) : n(a.size()), table(n, vector<T>(lg(n) + 1)), f(_f) {
     for(int i = 0; i < n; i++) table[i][0] = a[i];
     int d = lg(n) + 1;
     for(int j = 1; j < d; j++)
@@ -19,4 +17,3 @@ template<typename T> struct sparse_table {
     return f(table[l][d], table[r+1 - (1<<d)][d]);
   }
 };
-

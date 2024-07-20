@@ -1,5 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
 /*
   O(|S| + |alphabet|) Suffix Array
   LIM := max{s[i]} + 2
@@ -8,6 +6,7 @@ using namespace std;
   - Call getSuffixArray(s) to get the suffix array of string s
   - Call getLCParray(s, SA, rank) to get the LCP array of string s
   - Don't use '$' as delimiter. Use '%' instead
+  - rank array contains the position of i^th suffix after sorting
 */
 namespace SuffixArray {
   void inducedSort (const vector <int> &vec, int val_range, vector <int> &SA, const vector <int> &sl, const vector <int> &lms_idx) {
