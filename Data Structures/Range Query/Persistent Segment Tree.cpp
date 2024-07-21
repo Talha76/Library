@@ -15,6 +15,7 @@ namespace persistent_segtree {
     return new_number;
   }
 
+  /* Don't touch anything below */
   void init(int _L, int _R, DT _identity) {
     identity = _identity;
     L = _L, R = _R;
