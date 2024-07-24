@@ -1,17 +1,16 @@
 /*
  * You may need to edit the following lines/functions:
  * - DT: Data type of your choice
- * - get(x, i): Returns value at i^th position of x
- * - next_val(x, i): Checks if next position of i exists in x
- *                   by changing the value of i
- * - next_pos(i): Returns next traversal position of i
- * - new_node(v): Creates a new node with value=v;
- *                update other information while creating a new node
- * - update(u, x): Updates the value of node u after inserting
- *                 to it's children, according to value v and position i
- * - update_leaf(u): Update node u as a leaf
- * - query(x): The way you want to do the query,
- *             you can change the parameters
+ * - get(x, i): int = Returns value at i^th position of x
+ * - next_val(x, i): bool = Checks if next position of i exists in x
+ *                          by changing the value of i
+ * - next_pos(i): int = Returns next traversal position of i
+ * - new_node(v): int = Creates a new node with value=v;
+ *                      update other information while creating a new node;
+ *                      returns new node number
+ * - update(u, x, i, leaf): Updates the value of node u according to insertion x
+ *                          of position i; call leaf=true if u is a leaf node
+ * - query(x): <YOUR_WISH> = The way you want to do the query, you can change the parameters
  * - init(SZ, START): Call init to initialize trie,
  *                    SZ is the number of children,
  *                    START is the position to start from
@@ -33,8 +32,7 @@ namespace Trie {
     return new_num;
   }
 
-  void update(int u, const DT& x, int i) { sz[u]++; }
-  void update_leaf(int u) {}
+  void update(int u, const DT& x, int i, bool leaf=false) { sz[u]++; }
 
   int query(const DT& x) {}
   
@@ -51,6 +49,6 @@ namespace Trie {
       if (not child[u][nxt_v])child[u][nxt_v] = new_node();
       u = child[u][nxt_v];
     }
-    update_leaf(u);
+    update(u, x, i, true);
   }
 }
