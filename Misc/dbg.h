@@ -17,7 +17,7 @@ void show(bool x) {cerr << boolalpha << x;}
 
 // forward declaration
 template<typename T, typename V> void show(pair<T, V>);
-template<typename... Ts> void show(tuple<Ts...> const&);
+template<typename... Ts> void show(tuple<Ts...> const);
 template<typename T> void show(T);
 
 // pair
@@ -27,16 +27,16 @@ template<typename T, typename V> void show(pair<T, V> x) {
 
 // tuple
 template<size_t idx> struct tuple_print {
-  template<typename... Ts> static void print(const tuple<Ts...>& x) {
+  template<typename... Ts> static void print(const tuple<Ts...> x) {
     tuple_print<idx-1>::print(x);
     cerr << ", ";
     show(get<idx>(x));
   }
 };
 template<> struct tuple_print<0> {
-  template<typename... Ts> static void print(const tuple<Ts...>& x) {show(get<0>(x));}
+  template<typename... Ts> static void print(const tuple<Ts...> x) {show(get<0>(x));}
 };
-template<typename... Ts> void show(tuple<Ts...> const& x) {
+template<typename... Ts> void show(tuple<Ts...> const x) {
   cerr << '{';
   tuple_print<sizeof...(Ts)-1>::print(x);
   cerr << '}';
