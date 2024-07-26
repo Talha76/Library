@@ -1,10 +1,10 @@
 namespace persistent_segtree {
-  using DT = int;
-
   int L, R;
   DT identity;
   vector<DT> val;
   vector<int> roots, lt, rt;
+
+  using DT = int;
 
   DT merge(const DT &a, const DT &b) { return a+b; }
 
@@ -21,7 +21,6 @@ namespace persistent_segtree {
     L = _L, R = _R;
     roots.push_back(new_node());
   }
-
   int update(int i, int l=L, int r=R, int u=roots.back()) {
     if (i > r or i < l) return u;
     if (i == l and i == r) return new_node(val[u] + 1);
@@ -33,7 +32,6 @@ namespace persistent_segtree {
     val[u] = merge(val[lt[u]], val[rt[u]]);
     return u;
   }
-
   int query(int ql, int qr, int u, int l=L, int r=R) {
     if (ql > r or qr < l) return identity;
     if (ql <= l and r <= qr) return val[u];
