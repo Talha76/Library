@@ -9,7 +9,8 @@
         to the childred later, value is always updated.
     * How does the value and lazy data of a node change
         when a new update comes : apply()
-        Merging of updates take place here
+        - Merging of updates take place here
+        - Update val[u] using U, not lazy
     * How to merge the results of two nodes while answering
         queries : merge()
     * What is the identity of apply() : None
