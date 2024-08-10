@@ -62,4 +62,4 @@ namespace segtree {
     L = _L, R = _R;
     build(L, R, v);
   }
-};
+}
