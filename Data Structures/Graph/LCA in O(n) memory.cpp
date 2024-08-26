@@ -1,7 +1,7 @@
 struct LCA {
   int n;
   vector<int> lvl, par, jmp;
-  LCA(vector<vector<int>> const& g, int u, int p) : n(g.size()), lvl(n, -1), par(n, -1), jmp(n, -1) {
+  LCA(vector<vector<int>> const& g, int u, int p) : n(g.size()), lvl(n, -1), par(n, -1), jmp(n, p) {
     lvl[u] = 0, par[u] = p;
     queue<int> q;
     for (q.push(u); q.size(); q.pop()) {
@@ -35,5 +35,5 @@ struct LCA {
     }
     return u;
   }
-  int dist(int u, int v) { return lvl[u] + lvl[v] - lvl[lca(u, v)]; }
+  int dist(int u, int v) { return lvl[u] + lvl[v] - 2*lvl[lca(u, v)]; }
 };
