@@ -1,4 +1,9 @@
 namespace centroid {
+  const int N = 2e5;
+  int sz[N+1];
+  bitset<N> vis;
+  vector<int> adj[N+1];
+
   void dfs_size(int u = 1, int p = 0) {
     sz[u] = 1;
     for (auto v : adj[u])
