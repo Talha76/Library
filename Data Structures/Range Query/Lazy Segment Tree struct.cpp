@@ -1,15 +1,20 @@
+/*
+ * Constructor(array_of_elements, value_identity, none_identity, L, R, apply_fn, merge_fn)
+ *    - apply_fn(u, uval, l, r): applies the update uval at node 'u' and updates the lazy
+ *    - merge_fn(a, b, l, r): merges values a, b
+ */
 template<typename DT, typename LT> struct segtree {
   const DT I; 
   const LT None;
   vector<DT> val;
   vector<LT> lz;
   int L, R;
+  function<void(int, const LT&, int, int)> apply;
+  funciton<DT(const DT&, const DT&, int, int)> merge;
 
-  void apply(int u, const LT &U, int l, int r) {}
-  DT merge(const DT &a, const DT &b, int l, int r) {}
   /* -- Do Not Touch Anything Below This -- */
-  segtree(vector<DT> v, DT _I, LT _None, int _L, int _R) : val(v.size()<<2), lz(v.size()<<2),
-    I(_I), None(_None), L(_L), R(_R) { build(L, R, v); }
+  segtree(vector<DT> v, DT _I, LT _None, int _L, int _R, function<void(int, const LT&, int, int) _apply, function<DT(const DT&, const DT&, int, int) _merge) : val(v.size()<<2), lz(v.size()<<2),
+    I(_I), None(_None), L(_L), R(_R), apply(_apply), merge(_merge) { build(L, R, v); }
   void push(int l, int r, int u) {
     if(l == r) return;
     apply(u << 1, lz[u], l, (l + r) >> 1);
