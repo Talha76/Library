@@ -19,54 +19,54 @@
  *                    START is the position to start from
  */
 namespace Trie {
-  using DT = int;
-  int SZ, START;
-  vector child(0, vector<int>());
-  vector<int> sz, roots;
-
-  inline int get(const DT& x, int i) { return x >> i & 1; }
-  inline bool next_val(const DT& x, int i) { return ~i; }
-  inline int next_pos(int i) { return i-1; }
-
-  int new_node() {
-    int new_num = child.size();
-    child.emplace_back(SZ);
-    sz.push_back(0);
-    return new_num;
-  }
-  int copy(int u, int v) {
-    child[u] = child[v];
-    sz[u] = sz[v];
-    return u;
-  }
-
-  void update(int u, const DT& x, int i, bool leaf=false) { sz[u]++; }
-
-  int query(const DT& x, int l, int r) {
-    l = roots[--l], r = roots[r];
-    int ret = 0;
-    for (int i = START; next_val(x, i); i = next_pos(i)) {
-      int bit = get(x, i) ^ 1;
-      bit ^= sz[child[r][bit]] - sz[child[l][bit]] == 0;
-      ret |= (get(x, i) ^ bit) << i;
-      l = child[l][bit], r = child[r][bit];
+    using DT = int;
+    int SZ, START;
+    vector child(0, vector<int>());
+    vector<int> sz, roots;
+    
+    inline int get(const DT& x, int i) { return x >> i & 1; }
+    inline bool next_val(const DT& x, int i) { return ~i; }
+    inline int next_pos(int i) { return i-1; }
+    
+    int new_node() {
+        int new_num = child.size();
+        child.emplace_back(SZ);
+        sz.push_back(0);
+        return new_num;
     }
-    return ret;
-  }
-  
-  /* Don't touch anything below */
-  void init(int _SZ, int _START=0) {
-    SZ = _SZ, START = _START;
-    roots.push_back(new_node());
-  }
-  int insert(const DT x, int pos=START, int u=roots.back()) {
-    int new_u = new_node();
-    u = copy(new_u, u);
-    if (not next_val(x, pos)) update(u, x, pos, true);
-    else {
-      child[u][get(x, pos)] = insert(x, next_pos(pos), child[u][get(x, pos)]);
-      update(u, x, pos);
+    int copy(int u, int v) {
+        child[u] = child[v];
+        sz[u] = sz[v];
+        return u;
     }
-    return u;
-  }
+    
+    void update(int u, const DT& x, int i, bool leaf=false) { sz[u]++; }
+    
+    int query(const DT& x, int l, int r) {
+        l = roots[--l], r = roots[r];
+        int ret = 0;
+        for (int i = START; next_val(x, i); i = next_pos(i)) {
+            int bit = get(x, i) ^ 1;
+            bit ^= sz[child[r][bit]] - sz[child[l][bit]] == 0;
+            ret |= (get(x, i) ^ bit) << i;
+            l = child[l][bit], r = child[r][bit];
+        }
+        return ret;
+    }
+    
+    /* Don't touch anything below */
+    void init(int _SZ, int _START=0) {
+        SZ = _SZ, START = _START;
+        roots.push_back(new_node());
+    }
+    int insert(const DT x, int pos=START, int u=roots.back()) {
+        int new_u = new_node();
+        u = copy(new_u, u);
+        if (not next_val(x, pos)) update(u, x, pos, true);
+        else {
+            child[u][get(x, pos)] = insert(x, next_pos(pos), child[u][get(x, pos)]);
+            update(u, x, pos);
+        }
+        return u;
+    }
 }

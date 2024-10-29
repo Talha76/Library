@@ -1,10 +1,3 @@
-// Then which of Allah's favor will you deny?
-// author: Mushfiq_Talha
-#include "dbg.h"
-#include "bits/stdc++.h"
-using namespace std;
-typedef long long LL;
-
 const int mod = 1e9 + 7;
 const int lim = 5002;
 
@@ -41,15 +34,3 @@ int C(int n, int r) {
   int denom = (1ll*inv[r]*inv[n - r]) % mod;
   return (1ll*fact[n]*denom) % mod;
 }
-
-signed main() {
-  cin.tie(NULL)->sync_with_stdio(false);
-
-  pre_compute(); combi();
-  bool f = false;
-  for (int i = 1; not f and i < lim; i++) for (int j = 0; not f and j <= i; j++)
-    assert(nCr[i][j] == C(i, j));
-
-  return 0;
-}
-
